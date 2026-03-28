@@ -1,0 +1,41 @@
+[
+  {
+    "id": "post-merger",
+    "name": "Post-Merger Integration",
+    "description": "Two engineering teams from a recently acquired EV startup are being integrated into BMW's Leipzig plant. High attrition risk, cultural clash between startup agility and BMW process rigor. 6-month deadline to unify toolchains and reporting.",
+    "weights": {
+      "decision_style": 1.5,
+      "risk_appetite": 1.0,
+      "communication_mode": 2.0,
+      "execution_pace": 1.5,
+      "change_orientation": 2.0
+    },
+    "rationale": "Communication and change orientation are critical — the merged teams need leaders who can bridge cultural gaps and align on a shared direction. Execution pace matters because of the tight deadline. Decision style compatibility determines whether teams feel heard or steamrolled."
+  },
+  {
+    "id": "crisis-turnaround",
+    "name": "Crisis Turnaround",
+    "description": "A major battery recall has hit BMW's EV lineup. Production is halted at two plants, media pressure is intense, and the board wants a fix within 90 days. The leader pairing must coordinate rapid response across quality, production, and supply chain.",
+    "weights": {
+      "decision_style": 2.0,
+      "risk_appetite": 1.5,
+      "communication_mode": 1.0,
+      "execution_pace": 2.5,
+      "change_orientation": 0.5
+    },
+    "rationale": "Execution pace is paramount — every day of halted production costs millions. Decision style compatibility is critical because the pair must make fast, aligned calls without deadlock. Risk appetite matters because overly cautious responses extend the crisis. Change orientation is less relevant — this is about restoring stability, not transforming."
+  },
+  {
+    "id": "steady-state",
+    "name": "Steady-State Operations",
+    "description": "Normal operating conditions at Plant Munich. Production targets are being met, quality metrics are stable, and no major disruptions are expected. The focus is on incremental efficiency gains and maintaining team engagement over the next 12 months.",
+    "weights": {
+      "decision_style": 1.0,
+      "risk_appetite": 1.0,
+      "communication_mode": 1.5,
+      "execution_pace": 0.8,
+      "change_orientation": 0.8
+    },
+    "rationale": "In steady state, communication mode is the strongest differentiator — poor leader communication erodes morale over time even when metrics are fine. Execution pace and change orientation are slightly downweighted because there's no urgency or transformation mandate."
+  }
+]
