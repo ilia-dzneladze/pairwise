@@ -92,68 +92,56 @@ API docs available at `http://localhost:8000/docs`
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/leaders` | List all synthetic leader profiles |
+| GET | `/leaders` | List all leaders (id, name, role) |
+| POST | `/leaders` | Register a new leader from bio/CV text |
 | GET | `/leaders/{id}` | Get a specific leader's raw bio |
 | GET | `/leaders/{id}/profile` | Get structured trait scores for a single leader |
-| POST | `/profile` | Run Profile Structurer on a single leader (POST alternative) |
+| POST | `/profile` | Run Profile Structurer on a single leader |
 | POST | `/compatibility` | Analyze compatibility between two leaders |
 | GET | `/scenarios` | List available business scenarios |
-| POST | `/analyze/quick` | **Recommended** — full pipeline with a simple preset ID |
-| POST | `/analyze` | Full pipeline with full ScenarioInput (supports custom scenarios) |
+| POST | `/analyze/quick` | Full pipeline — simple form (two IDs + preset ID) |
+| POST | `/analyze` | Full pipeline — supports inline raw leaders + custom scenarios |
 | POST | `/analyze/stream` | Full pipeline with SSE progress events |
 | GET | `/health` | Health check |
 
-### Request / Response examples
+### Request examples
 
-**GET `/leaders/leader-01/profile`** — no body needed
-
-**POST `/profile`**
+**POST `/leaders`** — register a new leader
 ```json
-{ "leader_id": "leader-01" }
+{ "name": "Jane Smith", "role": "Chief Revenue Officer", "bio": "Full CV or bio text..." }
 ```
 
-**POST `/compatibility`**
+**POST `/analyze/quick`** — simplest pipeline call
 ```json
-{ "leader_a_id": "leader-01", "leader_b_id": "leader-03" }
+{ "leader_a_id": "leader-01", "leader_b_id": "leader-03", "preset_id": "post-merger" }
 ```
 
-**POST `/analyze/quick`** ← simplest way to run the full pipeline
+**POST `/analyze/stream`** — streaming pipeline (recommended for frontend)
 ```json
 {
-  "leader_a_id": "leader-01",
-  "leader_b_id": "leader-03",
-  "preset_id": "post-merger"
-}
-```
-
-**POST `/analyze`** — use this for custom scenarios
-```json
-{
-  "leader_a_id": "leader-01",
-  "leader_b_id": "leader-03",
+  "leader_a": { "leader_id": "leader-01" },
+  "leader_b": { "leader_id": "leader-03" },
   "scenario": { "preset_id": "post-merger" }
 }
 ```
-Or with a custom scenario instead of a preset:
+Or with an inline leader (no pre-registration needed):
 ```json
 {
-  "leader_a_id": "leader-01",
-  "leader_b_id": "leader-03",
+  "leader_a": { "leader_id": "leader-01" },
+  "leader_b": { "raw": { "id": "temp-001", "name": "Jane Smith", "role": "CRO", "bio": "..." } },
+  "scenario": { "preset_id": "crisis-turnaround" }
+}
+```
+Or with a custom scenario:
+```json
+{
+  "leader_a": { "leader_id": "leader-01" },
+  "leader_b": { "leader_id": "leader-03" },
   "scenario": { "custom_description": "Rapid international expansion into Southeast Asia" }
 }
 ```
 
-**POST `/analyze/stream`** — same body as `/analyze`, returns SSE events:
-```
-data: {"step": 1, "total": 6, "message": "Profiling Dr. Katarina Vogel..."}
-data: {"step": 2, "total": 6, "message": "Profiling Sarah Chen..."}
-...
-data: {"step": 6, "total": 6, "message": "Complete", "result": { ...full FullAnalysis... }}
-```
-
 ### Valid preset IDs
-
-Fetch the full list from `GET /scenarios`. Current presets:
 
 | ID | Name |
 |----|------|
@@ -165,17 +153,17 @@ Fetch the full list from `GET /scenarios`. Current presets:
 
 ## Building the Lovable Frontend
 
-The Lovable UI connects to the **deployed Render backend**. You do not need to run anything locally.
+See **[FRONTEND_BRIEF.md](./FRONTEND_BRIEF.md)** for the full engineer brief including UI flow, response shapes, styling guidance, and error handling.
 
 ### Base URL
 
-All API calls should use the deployed backend URL as the base:
-
 ```
-API_BASE_URL = https://pairwise-l3kn.onrender.com
+https://pairwise-l3kn.onrender.com
 ```
 
-### Available Leaders
+CORS is open (`*`) — Lovable can call the backend directly from the browser, no proxy needed.
+
+### Quick reference — Available Leaders
 
 | ID | Name | Role |
 |----|------|------|
@@ -188,19 +176,7 @@ API_BASE_URL = https://pairwise-l3kn.onrender.com
 | `leader-07` | Priya Kapoor | Chief People Officer |
 | `leader-08` | Thomas Weber | Chief Strategy Officer |
 
-Alternatively, fetch them dynamically from `GET /leaders`.
-
-### Suggested UI Flow
-
-1. **Pick two leaders** — fetch from `GET /leaders` or use the hardcoded table above
-2. **Pick a scenario** — fetch from `GET /scenarios` (IDs: `post-merger`, `crisis-turnaround`, `steady-state`)
-3. **Run analysis** — `POST /analyze/quick` with the two leader IDs + preset ID
-4. **Show the result** — compatibility score + per-dimension breakdown, impact scores for execution/morale/innovation/quality, verdict (`strong_pair` / `proceed_with_caution` / `high_risk`), headline, strengths, concerns, mitigations
-5. **Optional: stream progress** — use `POST /analyze/stream` (SSE) to show a live step-by-step loading indicator as each of the 6 agent steps completes
-
-### CORS
-
-The backend allows all origins (`*`) so Lovable can call it directly from the browser without any proxy.
+Fetch dynamically from `GET /leaders` — new leaders added via `POST /leaders` will appear here.
 
 ---
 
