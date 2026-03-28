@@ -20,6 +20,13 @@ export const api = {
       body: JSON.stringify({ leader_a_id, leader_b_id, scenario }),
     }),
 
+  profile: (leader_id: string) =>
+    request<unknown>('/profile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ leader_id }),
+    }),
+
   health: () =>
     request<{ status: string }>('/health'),
 };

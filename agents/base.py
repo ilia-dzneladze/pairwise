@@ -21,7 +21,7 @@ class BaseAgent:
             temperature=temperature,
             max_tokens=2000,
         )
-        return response.choices[0].message.content
+        return response.choices[0].message.content # type: ignore
 
     def _call_llm_json(self, system_prompt: str, user_prompt: str, temperature: float = 0.3) -> dict:
         """Make a Groq API call expecting JSON output."""
@@ -35,4 +35,4 @@ class BaseAgent:
             max_tokens=2000,
             response_format={"type": "json_object"},
         )
-        return json.loads(response.choices[0].message.content)
+        return json.loads(response.choices[0].message.content) # type: ignore
