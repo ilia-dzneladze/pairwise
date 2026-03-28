@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api } from './api'
 import type { FullAnalysis, Leader, Scenario, StreamEvent } from './api'
+import { parseFile } from './parseFile'
 
 const VERDICT_LABEL = {
   strong_pair: '✅ Strong Pair',
@@ -25,8 +26,10 @@ export default function App() {
   const [cvRole, setCvRole] = useState('')
   const [cvBio, setCvBio] = useState('')
   const [cvLoading, setCvLoading] = useState(false)
+  const [cvParsing, setCvParsing] = useState(false)
   const [cvError, setCvError] = useState<string | null>(null)
   const [cvSuccess, setCvSuccess] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   function refreshLeaders() {
     api.getLeaders().then(setLeaders)
@@ -36,6 +39,22 @@ export default function App() {
     api.getLeaders().then((l) => { setLeaders(l); setLeaderA(l[0]?.id); setLeaderB(l[1]?.id) })
     api.getScenarios().then((s) => { setScenarios(s); setScenarioId(s[0]?.id) })
   }, [])
+
+  async function handleFileAttach(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setCvParsing(true)
+    setCvError(null)
+    try {
+      const text = await parseFile(file)
+      setCvBio(text)
+    } catch (err) {
+      setCvError(String(err))
+    } finally {
+      setCvParsing(false)
+      e.target.value = ''
+    }
+  }
 
   async function submitCv() {
     if (!cvName.trim() || !cvRole.trim() || !cvBio.trim()) {
@@ -136,9 +155,19 @@ export default function App() {
                   style={{ width: '100%', padding: '7px', boxSizing: 'border-box' }} />
               </div>
             </div>
-            <label style={{ display: 'block', fontSize: 12, marginBottom: 4 }}>CV / Bio Text</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+              <label style={{ fontSize: 12 }}>CV / Bio Text</label>
+              <span>
+                <input ref={fileInputRef} type="file" accept=".pdf,.docx" onChange={handleFileAttach}
+                  style={{ display: 'none' }} />
+                <button onClick={() => fileInputRef.current?.click()} disabled={cvParsing}
+                  style={{ fontSize: 12, padding: '3px 10px', cursor: 'pointer' }}>
+                  {cvParsing ? 'Reading…' : '📎 Attach CV (.pdf / .docx)'}
+                </button>
+              </span>
+            </div>
             <textarea value={cvBio} onChange={e => setCvBio(e.target.value)}
-              placeholder="Paste the full CV or biography here..."
+              placeholder="Paste text or attach a .pdf / .docx file above..."
               rows={6}
               style={{ width: '100%', padding: '7px', boxSizing: 'border-box', fontFamily: 'sans-serif' }} />
             {cvError && <p style={{ color: 'red', margin: '8px 0 0' }}>{cvError}</p>}
