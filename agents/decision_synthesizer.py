@@ -73,7 +73,7 @@ PROJECTED BUSINESS IMPACT:
 
 Provide your final recommendation."""
 
-        result = self._call_llm_json(SYSTEM_PROMPT, user_prompt)
+        result = self._call_llm_json(SYSTEM_PROMPT, user_prompt, max_tokens=800)
 
         mitigations = [Mitigation(**m) for m in result.get("mitigations", [])]
 

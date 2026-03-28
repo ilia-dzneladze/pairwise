@@ -60,7 +60,7 @@ Rationale: {scenario.rationale}
 
 Predict the impact on all four business dimensions."""
 
-        result = self._call_llm_json(SYSTEM_PROMPT, user_prompt)
+        result = self._call_llm_json(SYSTEM_PROMPT, user_prompt, max_tokens=600)
 
         return ImpactProjection(
             execution_speed=ImpactScore(**result["execution_speed"]),

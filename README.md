@@ -56,7 +56,7 @@ A multi-agent AI system that goes beyond evaluating leaders individually. PairWi
 ```
 Lovable UI  ──────────────────────────────────────┐
 Vercel (frontend/)  ──────────────────────────────┤──► Render (FastAPI backend)
-Local dev (npm run dev + uvicorn)  ────────────────┘
+Local dev (npm run dev + uvicorn)  ───────────────┘
 ```
 
 The backend is a single FastAPI service. All three frontends call the same API endpoints.
@@ -249,4 +249,4 @@ The backend allows all origins (`*`) so Lovable can call it directly from the br
 | AI & Agent Quality (20pts) | 5 specialized agents with explicit reasoning chains |
 | Technical Implementation (10pts) | Clean architecture, typed models, modular agents |
 | User Experience (10pts) | Lovable frontend with real-time scenario toggling |
-| Video Clarity (5pts) | Clear demo flow: pick pair → see analysis → toggle scenario |
+| Video Clarity (5pts) | Clear demo flow: pick pair -> see analysis -> toggle scenario |

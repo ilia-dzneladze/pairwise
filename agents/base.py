@@ -13,7 +13,7 @@ class BaseAgent:
         self.client = Groq(api_key=settings.groq_api_key)
         self.model = settings.groq_model
 
-    def _call_llm(self, system_prompt: str, user_prompt: str, temperature: float = 0.3) -> str:
+    def _call_llm(self, system_prompt: str, user_prompt: str, temperature: float = 0.3, max_tokens: int = 800) -> str:
         """Make a Groq API call and return the response text."""
         response = self.client.chat.completions.create(
             model=self.model,
@@ -22,11 +22,11 @@ class BaseAgent:
                 {"role": "user", "content": user_prompt},
             ],
             temperature=temperature,
-            max_tokens=2000,
+            max_tokens=max_tokens,
         )
         return response.choices[0].message.content # type: ignore
 
-    def _call_llm_json(self, system_prompt: str, user_prompt: str, temperature: float = 0.3) -> dict:
+    def _call_llm_json(self, system_prompt: str, user_prompt: str, temperature: float = 0.3, max_tokens: int = 800) -> dict:
         """Make a Groq API call expecting JSON output. Retries on malformed JSON."""
         last_error: Exception | None = None
         for attempt in range(MAX_RETRIES):
@@ -38,7 +38,7 @@ class BaseAgent:
                         {"role": "user", "content": user_prompt},
                     ],
                     temperature=temperature,
-                    max_tokens=2000,
+                    max_tokens=max_tokens,
                     response_format={"type": "json_object"},
                 )
                 return json.loads(response.choices[0].message.content) # type: ignore

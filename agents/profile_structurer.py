@@ -39,7 +39,7 @@ Role: {leader.role}
 Biography:
 {leader.bio}"""
 
-        result = self._call_llm_json(SYSTEM_PROMPT, user_prompt)
+        result = self._call_llm_json(SYSTEM_PROMPT, user_prompt, max_tokens=600)
 
         traits = LeaderTraits(
             decision_style=TraitScore(**result["traits"]["decision_style"]),

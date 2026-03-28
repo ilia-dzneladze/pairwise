@@ -68,7 +68,7 @@ Scenario: {scenario_input.custom_description}
 
 What leadership traits matter most in this context?"""
 
-        result = self._call_llm_json(SYSTEM_PROMPT, user_prompt)
+        result = self._call_llm_json(SYSTEM_PROMPT, user_prompt, max_tokens=400)
 
         return Scenario(
             id="custom",
