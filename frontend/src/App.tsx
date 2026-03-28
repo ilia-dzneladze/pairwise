@@ -19,10 +19,44 @@ export default function App() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // CV import state
+  const [showCvForm, setShowCvForm] = useState(false)
+  const [cvName, setCvName] = useState('')
+  const [cvRole, setCvRole] = useState('')
+  const [cvBio, setCvBio] = useState('')
+  const [cvLoading, setCvLoading] = useState(false)
+  const [cvError, setCvError] = useState<string | null>(null)
+  const [cvSuccess, setCvSuccess] = useState<string | null>(null)
+
+  function refreshLeaders() {
+    api.getLeaders().then(setLeaders)
+  }
+
   useEffect(() => {
     api.getLeaders().then((l) => { setLeaders(l); setLeaderA(l[0]?.id); setLeaderB(l[1]?.id) })
     api.getScenarios().then((s) => { setScenarios(s); setScenarioId(s[0]?.id) })
   }, [])
+
+  async function submitCv() {
+    if (!cvName.trim() || !cvRole.trim() || !cvBio.trim()) {
+      setCvError('Name, role, and CV text are all required')
+      return
+    }
+    setCvLoading(true)
+    setCvError(null)
+    setCvSuccess(null)
+    try {
+      const created = await api.createLeader(cvName.trim(), cvRole.trim(), cvBio.trim())
+      setCvSuccess(`Created "${created.name}" (${created.id})`)
+      setCvName(''); setCvRole(''); setCvBio('')
+      setShowCvForm(false)
+      refreshLeaders()
+    } catch (e) {
+      setCvError(String(e))
+    } finally {
+      setCvLoading(false)
+    }
+  }
 
   function runAnalysis() {
     if (!leaderA || !leaderB || !scenarioId) return
@@ -76,6 +110,44 @@ export default function App() {
             {loading ? 'Running…' : 'Analyze'}
           </button>
         </div>
+      </div>
+
+      {/* CV import */}
+      <div style={{ marginBottom: 24 }}>
+        <button onClick={() => { setShowCvForm(!showCvForm); setCvError(null); setCvSuccess(null) }}
+          style={{ fontSize: 13, padding: '4px 12px', cursor: 'pointer' }}>
+          {showCvForm ? '✕ Cancel' : '+ Add Leader from CV'}
+        </button>
+        {cvSuccess && <span style={{ marginLeft: 12, color: 'green', fontSize: 13 }}>{cvSuccess}</span>}
+
+        {showCvForm && (
+          <div style={{ marginTop: 12, padding: 16, border: '1px solid #ddd', borderRadius: 6 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 12, marginBottom: 4 }}>Full Name</label>
+                <input value={cvName} onChange={e => setCvName(e.target.value)}
+                  placeholder="e.g. Jane Smith"
+                  style={{ width: '100%', padding: '7px', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: 12, marginBottom: 4 }}>Role / Title</label>
+                <input value={cvRole} onChange={e => setCvRole(e.target.value)}
+                  placeholder="e.g. Chief Revenue Officer"
+                  style={{ width: '100%', padding: '7px', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+            <label style={{ display: 'block', fontSize: 12, marginBottom: 4 }}>CV / Bio Text</label>
+            <textarea value={cvBio} onChange={e => setCvBio(e.target.value)}
+              placeholder="Paste the full CV or biography here..."
+              rows={6}
+              style={{ width: '100%', padding: '7px', boxSizing: 'border-box', fontFamily: 'sans-serif' }} />
+            {cvError && <p style={{ color: 'red', margin: '8px 0 0' }}>{cvError}</p>}
+            <button onClick={submitCv} disabled={cvLoading}
+              style={{ marginTop: 10, padding: '8px 20px', cursor: 'pointer' }}>
+              {cvLoading ? 'Saving…' : 'Save Leader'}
+            </button>
+          </div>
+        )}
       </div>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}

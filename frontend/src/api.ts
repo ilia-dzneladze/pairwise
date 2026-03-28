@@ -50,6 +50,13 @@ export const api = {
   getLeaders: () => request<Leader[]>('/leaders'),
   getScenarios: () => request<Scenario[]>('/scenarios'),
 
+  createLeader: (name: string, role: string, bio: string) =>
+    request<Leader & { bio: string }>('/leaders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, role, bio }),
+    }),
+
   streamAnalyze: (
     leader_a_id: string,
     leader_b_id: string,
@@ -60,7 +67,11 @@ export const api = {
     fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ leader_a_id, leader_b_id, scenario: { preset_id } }),
+      body: JSON.stringify({
+        leader_a: { leader_id: leader_a_id },
+        leader_b: { leader_id: leader_b_id },
+        scenario: { preset_id },
+      }),
     }).then(async (res) => {
       const reader = res.body!.getReader();
       const decoder = new TextDecoder();
