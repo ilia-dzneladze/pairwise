@@ -144,7 +144,7 @@ https://pairwise-api.onrender.com
 Set this as an environment variable or constant in your Lovable project:
 
 ```
-API_BASE_URL = https://pairwise-api.onrender.com
+API_BASE_URL = https://pairwise-l3kn.onrender.com
 ```
 
 ### Available Leaders
