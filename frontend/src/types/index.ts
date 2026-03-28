@@ -81,12 +81,42 @@ export interface StreamError {
 
 export type StreamEvent = StepEvent | StreamError
 
-export const DIMENSION_META: Record<string, { label: string; low: string; high: string }> = {
-  decision_style: { label: 'Decision Style', low: 'Directive', high: 'Collaborative' },
-  risk_appetite: { label: 'Risk Appetite', low: 'Conservative', high: 'Aggressive' },
-  communication_mode: { label: 'Communication', low: 'Top-Down', high: 'Consensus' },
-  execution_pace: { label: 'Execution Pace', low: 'Deliberate', high: 'Fast' },
-  change_orientation: { label: 'Change Drive', low: 'Stability', high: 'Transformation' },
+export const DIMENSION_META: Record<string, { label: string; low: string; high: string; lowDesc: string; highDesc: string }> = {
+  decision_style: {
+    label: 'Decision Style',
+    low: 'Directive',
+    high: 'Collaborative',
+    lowDesc: 'Makes decisions top-down with minimal input. Values speed and clarity of command.',
+    highDesc: 'Seeks broad input and shared ownership of decisions. Values alignment and buy-in.',
+  },
+  risk_appetite: {
+    label: 'Risk Appetite',
+    low: 'Conservative',
+    high: 'Aggressive',
+    lowDesc: 'Favors proven approaches, thorough validation, and incremental change.',
+    highDesc: 'Embraces bold bets, tolerates failure, and pushes boundaries to move fast.',
+  },
+  communication_mode: {
+    label: 'Communication',
+    low: 'Top-Down',
+    high: 'Consensus',
+    lowDesc: 'Cascades information through hierarchy. Clear chain of command for messaging.',
+    highDesc: 'Open forums, cross-functional transparency, and collective sense-making.',
+  },
+  execution_pace: {
+    label: 'Execution Pace',
+    low: 'Deliberate',
+    high: 'Fast',
+    lowDesc: 'Methodical planning, thorough review cycles, and careful rollout.',
+    highDesc: 'Rapid iteration, bias toward action, and willingness to course-correct on the fly.',
+  },
+  change_orientation: {
+    label: 'Change Drive',
+    low: 'Stability',
+    high: 'Transformation',
+    lowDesc: 'Prioritizes continuity, process optimization, and protecting what works.',
+    highDesc: 'Actively disrupts the status quo, drives reinvention, and champions new models.',
+  },
 }
 
 export const VERDICT_CONFIG: Record<Recommendation['verdict'], { label: string; color: string }> = {

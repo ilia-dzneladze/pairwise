@@ -58,6 +58,8 @@ function CustomAxisTick({ x, y, payload }: any) {
 export function CompatibilityRadar({ result }: Props) {
   const score = useCountUp(result.compatibility.overall_score)
 
+  const scoreColor = score >= 75 ? 'var(--color-success)' : score >= 50 ? 'var(--color-amber)' : 'var(--color-alert-red)'
+
   const data = result.compatibility.dimensions.map(d => ({
     dimension: DIMENSION_META[d.dimension]?.label || d.dimension,
     leaderA: d.score_a,
@@ -79,7 +81,7 @@ export function CompatibilityRadar({ result }: Props) {
             fontFamily: 'var(--font-heading)',
             fontWeight: 700,
             fontSize: 64,
-            color: 'var(--color-bmw-blue)',
+            color: scoreColor,
             lineHeight: 1,
           }}>
             {score}
