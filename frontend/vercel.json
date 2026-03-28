@@ -1,5 +1,11 @@
 {
   "rewrites": [
+    { "source": "/leaders/:path*", "destination": "https://pairwise-l3kn.onrender.com/leaders/:path*" },
+    { "source": "/scenarios/:path*", "destination": "https://pairwise-l3kn.onrender.com/scenarios/:path*" },
+    { "source": "/analyze/:path*", "destination": "https://pairwise-l3kn.onrender.com/analyze/:path*" },
+    { "source": "/profile/:path*", "destination": "https://pairwise-l3kn.onrender.com/profile/:path*" },
+    { "source": "/compatibility/:path*", "destination": "https://pairwise-l3kn.onrender.com/compatibility/:path*" },
+    { "source": "/health", "destination": "https://pairwise-l3kn.onrender.com/health" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
