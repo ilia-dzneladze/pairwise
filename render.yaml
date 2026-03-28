@@ -7,3 +7,5 @@ services:
     envVars:
       - key: GROQ_API_KEY
         sync: false   # You'll paste this in the Render dashboard
+      - key: PYTHONPATH
+        value: /opt/render/project/src
