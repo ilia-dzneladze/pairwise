@@ -94,13 +94,18 @@ API docs available at `http://localhost:8000/docs`
 |--------|------|-------------|
 | GET | `/leaders` | List all synthetic leader profiles |
 | GET | `/leaders/{id}` | Get a specific leader's raw bio |
-| POST | `/profile` | Run Profile Structurer on a single leader |
+| GET | `/leaders/{id}/profile` | Get structured trait scores for a single leader |
+| POST | `/profile` | Run Profile Structurer on a single leader (POST alternative) |
 | POST | `/compatibility` | Analyze compatibility between two leaders |
 | GET | `/scenarios` | List available business scenarios |
-| POST | `/analyze` | Full pipeline: two leaders + scenario → recommendation |
+| POST | `/analyze/quick` | **Recommended** — full pipeline with a simple preset ID |
+| POST | `/analyze` | Full pipeline with full ScenarioInput (supports custom scenarios) |
+| POST | `/analyze/stream` | Full pipeline with SSE progress events |
 | GET | `/health` | Health check |
 
 ### Request / Response examples
+
+**GET `/leaders/leader-01/profile`** — no body needed
 
 **POST `/profile`**
 ```json
@@ -112,20 +117,49 @@ API docs available at `http://localhost:8000/docs`
 { "leader_a_id": "leader-01", "leader_b_id": "leader-03" }
 ```
 
-**POST `/analyze`**
+**POST `/analyze/quick`** ← simplest way to run the full pipeline
 ```json
 {
   "leader_a_id": "leader-01",
   "leader_b_id": "leader-03",
-  "scenario": {
-    "id": "digital-transformation",
-    "name": "Digital Transformation",
-    "description": "Optional override — leave empty to use preset"
-  }
+  "preset_id": "post-merger"
 }
 ```
 
-Use `GET /scenarios` to get the list of valid preset scenario IDs.
+**POST `/analyze`** — use this for custom scenarios
+```json
+{
+  "leader_a_id": "leader-01",
+  "leader_b_id": "leader-03",
+  "scenario": { "preset_id": "post-merger" }
+}
+```
+Or with a custom scenario instead of a preset:
+```json
+{
+  "leader_a_id": "leader-01",
+  "leader_b_id": "leader-03",
+  "scenario": { "custom_description": "Rapid international expansion into Southeast Asia" }
+}
+```
+
+**POST `/analyze/stream`** — same body as `/analyze`, returns SSE events:
+```
+data: {"step": 1, "total": 6, "message": "Profiling Dr. Katarina Vogel..."}
+data: {"step": 2, "total": 6, "message": "Profiling Sarah Chen..."}
+...
+data: {"step": 6, "total": 6, "message": "Complete", "result": { ...full FullAnalysis... }}
+```
+
+### Valid preset IDs
+
+Fetch the full list from `GET /scenarios`. Current presets:
+
+| ID | Name |
+|----|------|
+| `post-merger` | Post-Merger Integration |
+| `crisis-turnaround` | Crisis Turnaround |
+| `steady-state` | Steady-State Operations |
 
 ---
 
@@ -136,12 +170,6 @@ The Lovable UI connects to the **deployed Render backend**. You do not need to r
 ### Base URL
 
 All API calls should use the deployed backend URL as the base:
-
-```
-https://pairwise-api.onrender.com
-```
-
-Set this as an environment variable or constant in your Lovable project:
 
 ```
 API_BASE_URL = https://pairwise-l3kn.onrender.com
@@ -164,10 +192,11 @@ Alternatively, fetch them dynamically from `GET /leaders`.
 
 ### Suggested UI Flow
 
-1. **Step 1 — Pick two leaders** from a dropdown or card grid
-2. **Step 2 — Pick a scenario** (fetch from `GET /scenarios`)
-3. **Step 3 — Hit Analyze** → `POST /analyze` → display the result
-4. Show the compatibility scores, impact projection, and final recommendation/verdict
+1. **Pick two leaders** — fetch from `GET /leaders` or use the hardcoded table above
+2. **Pick a scenario** — fetch from `GET /scenarios` (IDs: `post-merger`, `crisis-turnaround`, `steady-state`)
+3. **Run analysis** — `POST /analyze/quick` with the two leader IDs + preset ID
+4. **Show the result** — compatibility score + per-dimension breakdown, impact scores for execution/morale/innovation/quality, verdict (`strong_pair` / `proceed_with_caution` / `high_risk`), headline, strengths, concerns, mitigations
+5. **Optional: stream progress** — use `POST /analyze/stream` (SSE) to show a live step-by-step loading indicator as each of the 6 agent steps completes
 
 ### CORS
 

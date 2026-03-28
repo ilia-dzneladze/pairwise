@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from pydantic import BaseModel, Field
 from enum import Enum
+
+from models.compatibility import CompatibilityReport
 
 
 class Verdict(str, Enum):
@@ -48,6 +52,6 @@ class FullAnalysis(BaseModel):
     leader_a_name: str
     leader_b_name: str
     scenario_name: str
-    compatibility: dict  # CompatibilityReport as dict
-    impact: dict  # ImpactProjection as dict
-    recommendation: dict  # Recommendation as dict
+    compatibility: CompatibilityReport
+    impact: ImpactProjection
+    recommendation: Recommendation
