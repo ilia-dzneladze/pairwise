@@ -33,6 +33,10 @@ class LeaderProfile(BaseModel):
     role: str
     traits: LeaderTraits
     summary: str = Field(..., description="2-3 sentence leadership style summary")
+    bio_summary: str = Field(
+        default="",
+        description="2-3 sentence biography for frontend display: background, experience, and key strengths",
+    )
 
 
 class LeaderRaw(BaseModel):

@@ -62,6 +62,10 @@ export interface Recommendation {
 export interface AnalysisResult {
   leader_a_name: string
   leader_b_name: string
+  leader_a_role?: string
+  leader_b_role?: string
+  leader_a_bio?: string
+  leader_b_bio?: string
   scenario_name: string
   compatibility: CompatibilityReport
   impact: ImpactProjection

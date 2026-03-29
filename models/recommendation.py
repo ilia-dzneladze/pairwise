@@ -51,6 +51,10 @@ class FullAnalysis(BaseModel):
     """Complete pipeline output — everything the frontend needs."""
     leader_a_name: str
     leader_b_name: str
+    leader_a_role: str = ""
+    leader_b_role: str = ""
+    leader_a_bio: str = ""
+    leader_b_bio: str = ""
     scenario_name: str
     compatibility: CompatibilityReport
     impact: ImpactProjection

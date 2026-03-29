@@ -13,6 +13,7 @@ Score each dimension from 1 to 10:
 
 For each score, provide a ONE-SENTENCE justification grounded in specific evidence from the bio.
 Also provide a 2-3 sentence summary of their overall leadership style.
+Finally, write a 2-3 sentence bio_summary for display on a dashboard: briefly describe who this person is, their background and experience, and what they are known for. Write in third person.
 
 Respond in JSON with this exact structure:
 {
@@ -23,7 +24,8 @@ Respond in JSON with this exact structure:
     "execution_pace": {"score": <float>, "justification": "<string>"},
     "change_orientation": {"score": <float>, "justification": "<string>"}
   },
-  "summary": "<string>"
+  "summary": "<string>",
+  "bio_summary": "<string>"
 }"""
 
 
@@ -55,4 +57,5 @@ Biography:
             role=leader.role,
             traits=traits,
             summary=result["summary"],
+            bio_summary=result.get("bio_summary", result["summary"]),
         )

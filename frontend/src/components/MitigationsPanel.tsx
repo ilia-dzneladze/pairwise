@@ -25,15 +25,12 @@ export function MitigationsPanel({ mitigations, strengths, concerns }: Props) {
             fontWeight: 700,
             marginBottom: 12,
             color: 'var(--color-success)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
           }}>
             Strengths
           </h4>
           <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
             {strengths.map((s, i) => (
-              <li key={i} style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--color-text)' }}>
+              <li key={i} style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--color-text)' }}>
                 {s}
               </li>
             ))}
@@ -53,15 +50,12 @@ export function MitigationsPanel({ mitigations, strengths, concerns }: Props) {
             fontWeight: 700,
             marginBottom: 12,
             color: 'var(--color-alert-red)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
           }}>
             Concerns
           </h4>
           <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
             {concerns.map((c, i) => (
-              <li key={i} style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--color-text)' }}>
+              <li key={i} style={{ fontSize: 15, lineHeight: 1.6, color: 'var(--color-text)' }}>
                 {c}
               </li>
             ))}
@@ -98,48 +92,48 @@ export function MitigationsPanel({ mitigations, strengths, concerns }: Props) {
                 }} />
               )}
               <div>
-                <div style={{ marginBottom: 6 }}>
+                <div style={{ marginBottom: 8 }}>
                   <span style={{
                     fontSize: 12,
-                    color: 'var(--color-text-muted)',
+                    color: 'var(--color-bmw-blue)',
                     textTransform: 'uppercase',
                     letterSpacing: 0.5,
                     fontFamily: 'var(--font-heading)',
-                    fontWeight: 500,
+                    fontWeight: 700,
                   }}>
                     Friction Area
                   </span>
-                  <div style={{ fontSize: 14, fontWeight: 500, marginTop: 2 }}>
+                  <div style={{ fontSize: 15, fontWeight: 500, marginTop: 3, color: 'var(--color-text)' }}>
                     {m.friction_area}
                   </div>
                 </div>
-                <div style={{ marginBottom: 6 }}>
+                <div style={{ marginBottom: 8 }}>
                   <span style={{
                     fontSize: 12,
-                    color: 'var(--color-text-muted)',
+                    color: 'var(--color-bmw-blue)',
                     textTransform: 'uppercase',
                     letterSpacing: 0.5,
                     fontFamily: 'var(--font-heading)',
-                    fontWeight: 500,
+                    fontWeight: 700,
                   }}>
                     Suggestion
                   </span>
-                  <div style={{ fontSize: 14, marginTop: 2, lineHeight: 1.5 }}>
+                  <div style={{ fontSize: 15, marginTop: 3, lineHeight: 1.6, color: 'var(--color-text)' }}>
                     {m.suggestion}
                   </div>
                 </div>
                 <div>
                   <span style={{
                     fontSize: 12,
-                    color: 'var(--color-text-muted)',
+                    color: 'var(--color-bmw-blue)',
                     textTransform: 'uppercase',
                     letterSpacing: 0.5,
                     fontFamily: 'var(--font-heading)',
-                    fontWeight: 500,
+                    fontWeight: 700,
                   }}>
                     Expected Effect
                   </span>
-                  <div style={{ fontSize: 14, marginTop: 2, color: 'var(--color-text-muted)', lineHeight: 1.5 }}>
+                  <div style={{ fontSize: 15, marginTop: 3, color: 'var(--color-text)', lineHeight: 1.6 }}>
                     {m.expected_effect}
                   </div>
                 </div>

@@ -53,7 +53,7 @@ export function VerdictBanner({ result }: Props) {
           &ldquo;{headline}&rdquo;
         </div>
 
-        <div style={{ fontSize: 14, color: 'var(--color-text-muted)' }}>
+        <div style={{ fontSize: 15, color: 'var(--color-text)', opacity: 0.75 }}>
           {result.leader_a_name} &times; {result.leader_b_name}
           <span style={{ margin: '0 8px' }}>&middot;</span>
           {result.scenario_name}

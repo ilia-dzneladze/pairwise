@@ -39,9 +39,10 @@ export function ScenarioSelector({ scenarios, selected, onSelect }: Props) {
               {s.name}
             </div>
             <div style={{
-              fontSize: 13,
-              color: 'var(--color-text-muted)',
-              lineHeight: 1.4,
+              fontSize: 14,
+              color: 'var(--color-text)',
+              lineHeight: 1.5,
+              opacity: 0.75,
             }}>
               {s.description}
             </div>

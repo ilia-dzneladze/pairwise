@@ -8,7 +8,8 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDown } from 'lucide-react'
 import type { AnalysisResult } from '../types'
 import { DIMENSION_META } from '../types'
 
@@ -32,19 +33,27 @@ function useCountUp(target: number, duration = 800): number {
   return value
 }
 
-function CustomAxisTick({ x, y, payload }: any) {
+function CustomAxisTick({ x, y, payload, cx, cy }: any) {
   const dim = Object.entries(DIMENSION_META).find(([, v]) => v.label === payload.value)
   const meta = dim?.[1]
 
+  // Push labels further from center
+  const dx = x - cx
+  const dy = y - cy
+  const dist = Math.sqrt(dx * dx + dy * dy)
+  const push = 18
+  const nx = x + (dx / dist) * push
+  const ny = y + (dy / dist) * push
+
   return (
-    <g transform={`translate(${x},${y})`}>
+    <g transform={`translate(${nx},${ny})`}>
       <text
         textAnchor="middle"
         fill="var(--color-text)"
-        fontSize={12}
+        fontSize={14}
         fontFamily="var(--font-heading)"
-        fontWeight={500}
-        dy={0}
+        fontWeight={600}
+        dy={4}
       >
         {payload.value}
       </text>
@@ -56,8 +65,8 @@ function CustomAxisTick({ x, y, payload }: any) {
 }
 
 export function CompatibilityRadar({ result }: Props) {
+  const [expanded, setExpanded] = useState(false)
   const score = useCountUp(result.compatibility.overall_score)
-
   const scoreColor = score >= 75 ? 'var(--color-success)' : score >= 50 ? 'var(--color-amber)' : 'var(--color-alert-red)'
 
   const data = result.compatibility.dimensions.map(d => ({
@@ -65,6 +74,9 @@ export function CompatibilityRadar({ result }: Props) {
     leaderA: d.score_a,
     leaderB: d.score_b,
   }))
+
+  const assessment = result.compatibility.overall_assessment
+  const isLong = assessment.length > 120
 
   return (
     <motion.div
@@ -74,103 +86,145 @@ export function CompatibilityRadar({ result }: Props) {
       className="card"
       style={{ padding: 32 }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 32, alignItems: 'center' }}>
-        {/* Score display */}
-        <div style={{ textAlign: 'center' }}>
+      {/* Chart first — full width */}
+      <div style={{ marginBottom: 24 }}>
+        <ResponsiveContainer width="100%" height={420}>
+          <RechartsRadar data={data} cx="50%" cy="50%" outerRadius="62%">
+            <PolarGrid stroke="var(--color-border)" />
+            <PolarAngleAxis
+              dataKey="dimension"
+              tick={<CustomAxisTick />}
+              tickLine={false}
+            />
+            <PolarRadiusAxis
+              angle={90}
+              domain={[0, 10]}
+              tickCount={6}
+              tick={{ fontSize: 11, fill: 'var(--color-text-muted)' }}
+              axisLine={false}
+            />
+            <Radar
+              name={result.leader_a_name}
+              dataKey="leaderA"
+              stroke="#009ADA"
+              fill="#009ADA"
+              fillOpacity={0.3}
+              isAnimationActive
+              animationDuration={800}
+            />
+            <Radar
+              name={result.leader_b_name}
+              dataKey="leaderB"
+              stroke="#81C4FF"
+              fill="#81C4FF"
+              fillOpacity={0.3}
+              isAnimationActive
+              animationDuration={800}
+              animationBegin={200}
+            />
+            <Tooltip
+              contentStyle={{
+                background: 'var(--color-card)',
+                border: '1px solid var(--color-border)',
+                borderRadius: 8,
+                fontSize: 13,
+                color: 'var(--color-text)',
+              }}
+            />
+          </RechartsRadar>
+        </ResponsiveContainer>
+
+        {/* Legend */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: 24,
+          marginTop: 8,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14 }}>
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#009ADA' }} />
+            {result.leader_a_name}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14 }}>
+            <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#81C4FF' }} />
+            {result.leader_b_name}
+          </div>
+        </div>
+      </div>
+
+      {/* Score + Assessment below */}
+      <div style={{
+        borderTop: '1px solid var(--color-border)',
+        paddingTop: 24,
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 24,
+      }}>
+        <div style={{ textAlign: 'center', flexShrink: 0 }}>
           <div style={{
             fontFamily: 'var(--font-heading)',
             fontWeight: 700,
-            fontSize: 64,
+            fontSize: 56,
             color: scoreColor,
             lineHeight: 1,
           }}>
             {score}
           </div>
           <div style={{
-            fontSize: 14,
-            color: 'var(--color-text-muted)',
-            marginTop: 8,
-            marginBottom: 16,
+            fontSize: 13,
+            color: 'var(--color-text)',
+            marginTop: 6,
+            fontFamily: 'var(--font-heading)',
+            fontWeight: 500,
+            opacity: 0.7,
           }}>
             Compatibility Score
           </div>
-          <div style={{
-            fontSize: 14,
-            color: 'var(--color-text-muted)',
-            lineHeight: 1.5,
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-            overflow: 'hidden',
-          }}>
-            {result.compatibility.overall_assessment}
-          </div>
         </div>
 
-        {/* Radar chart */}
-        <div>
-          <ResponsiveContainer width="100%" height={320}>
-            <RechartsRadar data={data} cx="50%" cy="50%" outerRadius="75%">
-              <PolarGrid stroke="var(--color-border)" />
-              <PolarAngleAxis
-                dataKey="dimension"
-                tick={<CustomAxisTick />}
-                tickLine={false}
-              />
-              <PolarRadiusAxis
-                angle={90}
-                domain={[0, 10]}
-                tickCount={6}
-                tick={{ fontSize: 10, fill: 'var(--color-text-muted)' }}
-                axisLine={false}
-              />
-              <Radar
-                name={result.leader_a_name}
-                dataKey="leaderA"
-                stroke="#009ADA"
-                fill="#009ADA"
-                fillOpacity={0.3}
-                isAnimationActive
-                animationDuration={800}
-              />
-              <Radar
-                name={result.leader_b_name}
-                dataKey="leaderB"
-                stroke="#81C4FF"
-                fill="#81C4FF"
-                fillOpacity={0.3}
-                isAnimationActive
-                animationDuration={800}
-                animationBegin={200}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: 'var(--color-card)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 8,
-                  fontSize: 13,
-                  color: 'var(--color-text)',
-                }}
-              />
-            </RechartsRadar>
-          </ResponsiveContainer>
-
-          {/* Legend */}
+        <div
+          style={{ flex: 1, cursor: isLong ? 'pointer' : 'default' }}
+          onClick={() => isLong && setExpanded(!expanded)}
+        >
           <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 24,
-            marginTop: 8,
+            fontSize: 15,
+            color: 'var(--color-text)',
+            lineHeight: 1.7,
+            ...(!expanded && isLong ? {
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical' as const,
+              overflow: 'hidden',
+            } : {}),
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#009ADA' }} />
-              {result.leader_a_name}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#81C4FF' }} />
-              {result.leader_b_name}
-            </div>
+            {assessment}
           </div>
+
+          {isLong && (
+            <AnimatePresence>
+              <motion.div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  marginTop: 8,
+                  fontSize: 13,
+                  color: 'var(--color-bmw-blue)',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 500,
+                }}
+              >
+                {expanded ? 'Show less' : 'Read full assessment'}
+                <ChevronDown
+                  size={14}
+                  style={{
+                    transition: 'transform 150ms ease',
+                    transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                />
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
       </div>
     </motion.div>

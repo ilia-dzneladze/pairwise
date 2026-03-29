@@ -1,19 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;1,400&display=swap');
 
 :root {
+  /* Core palette: 000000 - 2D4046 - 009ADA - 81C4FF - E7222E */
   --color-black: #000000;
   --color-charcoal: #2D4046;
   --color-bmw-blue: #009ADA;
   --color-ice-blue: #81C4FF;
   --color-alert-red: #E7222E;
-  --color-surface: #0D1B22;
-  --color-card: #142A32;
-  --color-card-hover: #1A3540;
-  --color-text: #E8ECF0;
-  --color-text-muted: #8A9BA5;
+
+  /* Surfaces — built from pitch black */
+  --color-surface: #000000;
+  --color-card: #0A0A0A;
+  --color-card-hover: #141414;
+  --color-card-elevated: #1A1A1A;
+
+  /* Text — high contrast on pure black */
+  --color-text: #F0F2F4;
+  --color-text-muted: #B8C4CC;
+
+  /* Semantic */
   --color-success: #2ECC71;
   --color-amber: #F5A623;
-  --color-border: rgba(0, 154, 218, 0.15);
+  --color-border: rgba(45, 64, 70, 0.5);
 
   --font-heading: 'DM Sans', sans-serif;
   --font-body: 'IBM Plex Sans', sans-serif;
@@ -46,7 +54,7 @@ body {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
 }
 
 .card--hoverable {
@@ -96,7 +104,7 @@ h1, h2, h3, h4 {
   color: var(--color-success);
 }
 .badge--neutral {
-  background: rgba(138, 155, 165, 0.15);
+  background: rgba(184, 196, 204, 0.12);
   color: var(--color-text-muted);
 }
 .badge--friction {
@@ -112,8 +120,8 @@ h1, h2, h3, h4 {
   color: var(--color-amber);
 }
 .badge--low {
-  background: rgba(231, 34, 46, 0.1);
-  color: rgba(231, 34, 46, 0.6);
+  background: rgba(231, 34, 46, 0.12);
+  color: rgba(231, 34, 46, 0.85);
 }
 
 /* Button base */
@@ -155,7 +163,7 @@ h1, h2, h3, h4 {
   font-size: 14px;
 }
 .btn--outline:hover:not(:disabled) {
-  background: rgba(0, 154, 218, 0.1);
+  background: rgba(0, 154, 218, 0.08);
 }
 .btn--ghost {
   background: transparent;
@@ -173,7 +181,7 @@ textarea {
   font-family: var(--font-body);
   font-size: 14px;
   color: var(--color-text);
-  background: var(--color-surface);
+  background: var(--color-black);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 10px 14px;
@@ -188,7 +196,7 @@ textarea:focus {
 input[type="text"]::placeholder,
 textarea::placeholder {
   color: var(--color-text-muted);
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 /* Scrollbar */
@@ -208,13 +216,13 @@ textarea::placeholder {
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background: var(--color-card);
+  background: var(--color-card-elevated);
   border: 1px solid var(--color-success);
   border-radius: 8px;
   padding: 12px 20px;
   font-size: 14px;
   color: var(--color-success);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6);
   z-index: 1000;
 }
 
@@ -222,8 +230,8 @@ textarea::placeholder {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -231,11 +239,11 @@ textarea::placeholder {
   padding: 24px;
 }
 .modal-content {
-  background: var(--color-card);
+  background: var(--color-card-elevated);
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 32px;
   width: 100%;
   max-width: 560px;
-  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 48px rgba(0, 0, 0, 0.7);
 }

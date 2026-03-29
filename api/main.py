@@ -219,6 +219,10 @@ def run_full_pipeline(request: AnalyzeRequest):
     return FullAnalysis(
         leader_a_name=profile_a.name,
         leader_b_name=profile_b.name,
+        leader_a_role=profile_a.role,
+        leader_b_role=profile_b.role,
+        leader_a_bio=profile_a.bio_summary,
+        leader_b_bio=profile_b.bio_summary,
         scenario_name=scenario.name,
         compatibility=compatibility,
         impact=impact,
@@ -266,6 +270,10 @@ def stream_analysis(request: AnalyzeRequest):
         result = FullAnalysis(
             leader_a_name=profile_a.name,
             leader_b_name=profile_b.name,
+            leader_a_role=profile_a.role,
+            leader_b_role=profile_b.role,
+            leader_a_bio=profile_a.bio_summary,
+            leader_b_bio=profile_b.bio_summary,
             scenario_name=scenario.name,
             compatibility=compatibility,
             impact=impact,

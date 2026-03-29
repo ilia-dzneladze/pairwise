@@ -73,7 +73,7 @@ export default function App() {
         position: 'sticky',
         top: 0,
         zIndex: 30,
-        background: 'var(--color-surface)',
+        background: 'var(--color-black)',
         padding: '16px 0',
         display: 'flex',
         justifyContent: 'space-between',
@@ -93,7 +93,7 @@ export default function App() {
               PairWise
             </span>
           </div>
-          <div style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 2 }}>
+          <div style={{ fontSize: 13, color: 'var(--color-text)', opacity: 0.6, marginTop: 2 }}>
             Multi-Agent Leadership Intelligence
           </div>
         </div>

@@ -91,7 +91,7 @@ function ImpactBar({ metricKey, data, delay }: { metricKey: string; data: Impact
           {animated}
         </div>
 
-        <span className={`badge badge--${data.confidence}`} style={{ flexShrink: 0 }}>
+        <span className={`badge badge--${data.confidence}`} style={{ flexShrink: 0, minWidth: 70, justifyContent: 'center' }}>
           {data.confidence}
         </span>
 
@@ -116,12 +116,12 @@ function ImpactBar({ metricKey, data, delay }: { metricKey: string; data: Impact
             style={{ overflow: 'hidden' }}
           >
             <div style={{
-              marginTop: 12,
-              paddingTop: 12,
+              marginTop: 14,
+              paddingTop: 14,
               borderTop: '1px solid var(--color-border)',
-              fontSize: 13,
-              color: 'var(--color-text-muted)',
-              lineHeight: 1.5,
+              fontSize: 15,
+              color: 'var(--color-text)',
+              lineHeight: 1.6,
             }}>
               {data.reasoning}
             </div>
@@ -132,11 +132,72 @@ function ImpactBar({ metricKey, data, delay }: { metricKey: string; data: Impact
   )
 }
 
+function Legend() {
+  return (
+    <div
+      className="card"
+      style={{
+        padding: '20px 24px',
+        borderLeft: '4px solid var(--color-bmw-blue)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 16,
+      }}
+    >
+      <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: 15 }}>
+        How to Read This
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* Score scale */}
+        <div>
+          <div style={{ fontSize: 13, fontFamily: 'var(--font-heading)', fontWeight: 500, marginBottom: 8 }}>
+            Score (0-100)
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {[
+              { range: '81-100', label: 'Excellent', color: 'var(--color-bmw-blue)', desc: 'This pairing will likely excel here' },
+              { range: '61-80', label: 'Strong', color: 'var(--color-bmw-blue)', desc: 'Positive projected outcome' },
+              { range: '41-60', label: 'Moderate', color: 'var(--color-amber)', desc: 'Mixed signals, may need attention' },
+              { range: '0-40', label: 'At Risk', color: 'var(--color-alert-red)', desc: 'Likely friction area, mitigations recommended' },
+            ].map(row => (
+              <div key={row.range} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14 }}>
+                <div style={{ width: 24, height: 8, borderRadius: 4, background: row.color, flexShrink: 0 }} />
+                <span style={{ fontWeight: 500, width: 48, flexShrink: 0 }}>{row.range}</span>
+                <span style={{ color: 'var(--color-text)' }}>{row.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Confidence explanation */}
+        <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: 12 }}>
+          <div style={{ fontSize: 13, fontFamily: 'var(--font-heading)', fontWeight: 500, marginBottom: 8 }}>
+            Confidence Badge
+          </div>
+          <div style={{ fontSize: 14, color: 'var(--color-text)', lineHeight: 1.6 }}>
+            Indicates how much data the AI had to support this prediction.
+            <span style={{ fontWeight: 500, color: 'var(--color-success)' }}> High</span> means the leaders' profiles gave clear signals.
+            <span style={{ fontWeight: 500, color: 'var(--color-amber)' }}> Medium</span> means some inference was needed.
+            <span style={{ fontWeight: 500, color: 'var(--color-alert-red)' }}> Low</span> means limited evidence — treat as directional, not definitive.
+          </div>
+        </div>
+
+        {/* Click hint */}
+        <div style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
+          Click any bar to expand the AI's reasoning.
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function ImpactBars({ impact }: Props) {
   const entries = Object.entries(impact) as [string, ImpactScore][]
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <Legend />
       {entries.map(([key, data], i) => (
         <ImpactBar key={key} metricKey={key} data={data} delay={i * 0.08} />
       ))}
