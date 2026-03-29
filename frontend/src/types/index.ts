@@ -31,6 +31,7 @@ export interface Mitigation {
   friction_area: string
   suggestion: string
   expected_effect: string
+  score_increase?: number
 }
 
 export interface CompatibilityReport {

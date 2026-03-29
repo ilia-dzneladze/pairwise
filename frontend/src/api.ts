@@ -57,6 +57,13 @@ export const api = {
       body: JSON.stringify({ name, role, bio }),
     }),
 
+  createScenario: (name: string, description: string) =>
+    request<Scenario>('/scenarios', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description }),
+    }),
+
   streamAnalyze: (
     leader_a_id: string,
     leader_b_id: string,

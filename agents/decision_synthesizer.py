@@ -12,7 +12,7 @@ SYSTEM_PROMPT = """You are a senior leadership decision advisor. Given all upstr
 (compatibility report, scenario context, and impact projections), synthesize a final recommendation.
 
 Your output must include:
-1. verdict: "strong_pair", "proceed_with_caution", or "high_risk"
+1. verdict: STRICTLY follow these rules based on overall score: >= 75 is "strong_pair", 50-74 is "proceed_with_caution", < 50 is "high_risk".
 2. headline: One punchy sentence summarizing the pairing (e.g., "Complementary operators with a communication blind spot")
 3. strengths: Top 2-3 strengths of this pairing (short strings)
 4. concerns: Top 2-3 concerns (short strings)
@@ -29,7 +29,7 @@ Respond in JSON:
   "strengths": ["<string>", ...],
   "concerns": ["<string>", ...],
   "mitigations": [
-    {"friction_area": "<string>", "suggestion": "<string>", "expected_effect": "<string>"}
+    {"friction_area": "<string>", "suggestion": "<string>", "expected_effect": "<string>", "score_increase": <int>}
   ],
   "alternative_suggestion": "<string>" | null
 }"""
@@ -77,8 +77,17 @@ Provide your final recommendation."""
 
         mitigations = [Mitigation(**m) for m in result.get("mitigations", [])]
 
+        # Enforce strict score thresholds natively
+        score = compatibility.overall_score
+        if score >= 75:
+            computed_verdict = "strong_pair"
+        elif score >= 50:
+            computed_verdict = "proceed_with_caution"
+        else:
+            computed_verdict = "high_risk"
+
         return Recommendation(
-            verdict=Verdict(result["verdict"]),
+            verdict=Verdict(computed_verdict),
             headline=result["headline"],
             strengths=result["strengths"],
             concerns=result["concerns"],

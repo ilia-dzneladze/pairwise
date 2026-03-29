@@ -53,6 +53,20 @@ class ContextCalibrator(BaseAgent):
     def get_presets(self) -> list[Scenario]:
         return list(self._presets.values())
 
+    def save_scenario(self, scenario: Scenario) -> None:
+        self._presets[scenario.id] = scenario
+        out_data = []
+        for s in self._presets.values():
+            out_data.append({
+                "id": s.id,
+                "name": s.name,
+                "description": s.description,
+                "weights": s.weights.model_dump(),
+                "rationale": s.rationale,
+            })
+        with open(SCENARIOS_PATH, "w") as f:
+            json.dump(out_data, f, indent=2)
+
     def run(self, scenario_input: ScenarioInput) -> Scenario:
         # If a preset is selected, return it directly (no LLM call needed)
         if scenario_input.preset_id and scenario_input.preset_id in self._presets:

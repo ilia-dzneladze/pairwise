@@ -5,7 +5,7 @@ import { VerdictBanner } from './VerdictBanner'
 import { CompatibilityRadar } from './RadarChart'
 import { DimensionBreakdown } from './DimensionBreakdown'
 import { ImpactBars } from './ImpactBars'
-import { MitigationsPanel } from './MitigationsPanel'
+import { StrengthsConcernsPanel, MitigationsList } from './MitigationsPanel'
 
 interface Props {
   result: AnalysisResult
@@ -149,8 +149,14 @@ export function ResultsPanel({ result }: Props) {
       <VerdictBanner result={result} />
 
       <div>
-        <SectionLabel>Compatibility</SectionLabel>
+        <SectionLabel>Compatibility & Mitigations</SectionLabel>
         <CompatibilityRadar result={result} />
+        
+        <div style={{ marginTop: 24 }}>
+          <MitigationsList
+            mitigations={result.recommendation.mitigations}
+          />
+        </div>
       </div>
 
       <div>
@@ -169,10 +175,9 @@ export function ResultsPanel({ result }: Props) {
 
       <div>
         <SectionLabel>Assessment</SectionLabel>
-        <MitigationsPanel
+        <StrengthsConcernsPanel
           strengths={result.recommendation.strengths}
           concerns={result.recommendation.concerns}
-          mitigations={result.recommendation.mitigations}
         />
       </div>
     </motion.div>

@@ -78,6 +78,12 @@ export function CompatibilityRadar({ result }: Props) {
   const assessment = result.compatibility.overall_assessment
   const isLong = assessment.length > 120
 
+  const totalScore = result.compatibility.overall_score
+  const mitigations = result.recommendation?.mitigations || []
+  const synergyBonuses = mitigations.map(m => m.score_increase || 0)
+  const totalBonus = synergyBonuses.reduce((a, b) => a + b, 0)
+  const potentialSynergy = Math.min(100, totalScore + totalBonus)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -160,7 +166,7 @@ export function CompatibilityRadar({ result }: Props) {
         alignItems: 'flex-start',
         gap: 24,
       }}>
-        <div style={{ textAlign: 'center', flexShrink: 0 }}>
+        <div style={{ textAlign: 'center', flexShrink: 0, width: 150 }}>
           <div style={{
             fontFamily: 'var(--font-heading)',
             fontWeight: 700,
@@ -180,6 +186,46 @@ export function CompatibilityRadar({ result }: Props) {
           }}>
             Compatibility Score
           </div>
+
+          {totalBonus > 0 && (
+            <div style={{ marginTop: 24 }}>
+              <div style={{ 
+                display: 'flex', 
+                height: 8, 
+                background: 'var(--color-border)', 
+                borderRadius: 4, 
+                overflow: 'hidden', 
+                marginBottom: 8 
+              }}>
+                <motion.div 
+                  initial={{ width: 0 }} 
+                  animate={{ width: `${totalScore}%` }} 
+                  transition={{ duration: 1, delay: 0.2 }}
+                  style={{ background: scoreColor }} 
+                />
+                <motion.div 
+                  initial={{ width: 0 }} 
+                  animate={{ width: `${Math.min(100 - totalScore, totalBonus)}%` }} 
+                  transition={{ duration: 1, delay: 1.2 }}
+                  style={{ 
+                    background: 'repeating-linear-gradient(45deg, rgba(255,255,255,0.4), rgba(255,255,255,0.4) 4px, transparent 4px, transparent 8px)', 
+                    backgroundColor: scoreColor, 
+                    opacity: 0.6 
+                  }} 
+                />
+              </div>
+              <div style={{ 
+                fontSize: 12, 
+                color: 'var(--color-text-muted)', 
+                fontFamily: 'var(--font-heading)', 
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: 0.3
+              }}>
+                Potential Synergy: <span style={{ color: 'var(--color-text)' }}>{potentialSynergy}</span>
+              </div>
+            </div>
+          )}
         </div>
 
         <div

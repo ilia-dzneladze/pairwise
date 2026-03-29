@@ -1,25 +1,28 @@
 import { useState, useRef, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Plus, ArrowRight, Diamond, RefreshCw } from 'lucide-react'
+import { Plus, ArrowRight, RefreshCw } from 'lucide-react'
 import { useLeaders } from './hooks/useLeaders'
 import { useScenarios } from './hooks/useScenarios'
 import { useAnalysis } from './hooks/useAnalysis'
 import { LeaderSelector } from './components/LeaderSelector'
 import { ScenarioSelector } from './components/ScenarioSelector'
 import { AddLeaderModal } from './components/AddLeaderModal'
+import { AddScenarioModal } from './components/AddScenarioModal'
 import { AnalysisProgress } from './components/AnalysisProgress'
 import { ResultsPanel } from './components/ResultsPanel'
 import type { Leader } from './types'
+import logoUrl from './assets/logo.png'
 
 export default function App() {
   const { leaders, error: leadersError, addLeader } = useLeaders()
-  const { scenarios, error: scenariosError } = useScenarios()
+  const { scenarios, error: scenariosError, addScenario } = useScenarios()
   const { analyze, steps, result, isAnalyzing, error: analysisError, reset } = useAnalysis()
 
   const [leaderA, setLeaderA] = useState<Leader | null>(null)
   const [leaderB, setLeaderB] = useState<Leader | null>(null)
   const [scenarioId, setScenarioId] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
+  const [showScenarioModal, setShowScenarioModal] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
 
   const resultsRef = useRef<HTMLDivElement>(null)
@@ -66,6 +69,13 @@ export default function App() {
     setTimeout(() => setToast(null), 3000)
   }
 
+  async function handleAddScenario(name: string, description: string) {
+    await addScenario(name, description)
+    setShowScenarioModal(false)
+    setToast('Scenario added successfully')
+    setTimeout(() => setToast(null), 3000)
+  }
+
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px 64px' }}>
       {/* Header */}
@@ -82,12 +92,22 @@ export default function App() {
         marginBottom: 32,
       }}>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Diamond size={16} fill="var(--color-bmw-blue)" color="var(--color-bmw-blue)" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <img 
+              src={logoUrl} 
+              alt="BMW Logo" 
+              style={{ 
+                width: 44, 
+                height: 44, 
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15))'
+              }} 
+            />
             <span style={{
               fontFamily: 'var(--font-heading)',
-              fontWeight: 700,
-              fontSize: 20,
+              fontWeight: 800,
+              fontSize: 24,
+              letterSpacing: '-0.5px',
               color: 'var(--color-text)',
             }}>
               PairWise
@@ -97,10 +117,16 @@ export default function App() {
             Multi-Agent Leadership Intelligence
           </div>
         </div>
-        <button className="btn btn--outline" onClick={() => setShowModal(true)}>
-          <Plus size={16} />
-          Add Leader
-        </button>
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button className="btn btn--outline" onClick={() => setShowScenarioModal(true)}>
+            <Plus size={16} />
+            Manage Scenarios
+          </button>
+          <button className="btn btn--outline" onClick={() => setShowModal(true)}>
+            <Plus size={16} />
+            Add Leader
+          </button>
+        </div>
       </header>
 
       {/* Backend error banner */}
@@ -196,6 +222,17 @@ export default function App() {
           <AddLeaderModal
             onClose={() => setShowModal(false)}
             onAdd={handleAddLeader}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Add Scenario Modal */}
+      <AnimatePresence>
+        {showScenarioModal && (
+          <AddScenarioModal
+            scenarios={scenarios}
+            onClose={() => setShowScenarioModal(false)}
+            onAdd={handleAddScenario}
           />
         )}
       </AnimatePresence>

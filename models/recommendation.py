@@ -33,6 +33,7 @@ class Mitigation(BaseModel):
     friction_area: str
     suggestion: str
     expected_effect: str
+    score_increase: int = Field(0, description="Potential synergy points gained by enacting this mitigation (e.g. 5)")
 
 
 class Recommendation(BaseModel):

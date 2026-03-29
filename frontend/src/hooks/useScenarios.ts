@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Scenario } from '../types'
-
-const BASE = import.meta.env.VITE_API_URL ?? ''
+import { api } from '../api'
 
 export function useScenarios() {
   const [scenarios, setScenarios] = useState<Scenario[]>([])
@@ -11,9 +10,8 @@ export function useScenarios() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${BASE}/scenarios`)
-        if (!res.ok) throw new Error('Failed to load scenarios')
-        setScenarios(await res.json())
+        const res = await api.getScenarios()
+        setScenarios(res)
         setError(null)
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load scenarios')
@@ -23,5 +21,10 @@ export function useScenarios() {
     })()
   }, [])
 
-  return { scenarios, loading, error }
+  async function addScenario(name: string, description: string) {
+    const newScenario = await api.createScenario(name, description)
+    setScenarios(prev => [...prev, newScenario])
+  }
+
+  return { scenarios, loading, error, addScenario }
 }

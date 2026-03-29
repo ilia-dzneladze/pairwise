@@ -13,7 +13,6 @@ Score each dimension from 1 to 10:
 
 For each score, provide a ONE-SENTENCE justification grounded in specific evidence from the bio.
 Also provide a 2-3 sentence summary of their overall leadership style.
-Finally, write a 2-3 sentence bio_summary for display on a dashboard: briefly describe who this person is, their background and experience, and what they are known for. Write in third person.
 
 Respond in JSON with this exact structure:
 {
@@ -24,9 +23,10 @@ Respond in JSON with this exact structure:
     "execution_pace": {"score": <float>, "justification": "<string>"},
     "change_orientation": {"score": <float>, "justification": "<string>"}
   },
-  "summary": "<string>",
-  "bio_summary": "<string>"
+  "summary": "<string>"
 }"""
+
+BIO_SYSTEM_PROMPT = """You are a professional biographer. Given a leader's raw biography and role, write a 2-3 sentence summary for display on a dashboard. Briefly describe who this person is, their background and experience, and what they are known for. Write in third person, cleanly, without any filler text. Respond ONLY with the bio summary text."""
 
 
 class ProfileStructurer(BaseAgent):
@@ -41,7 +41,14 @@ Role: {leader.role}
 Biography:
 {leader.bio}"""
 
+        bio_user_prompt = f"""Name: {leader.name}
+Role: {leader.role}
+
+Biography:
+{leader.bio}"""
+
         result = self._call_llm_json(SYSTEM_PROMPT, user_prompt, max_tokens=600)
+        bio_summary = self._call_llm(BIO_SYSTEM_PROMPT, bio_user_prompt, max_tokens=200).strip()
 
         traits = LeaderTraits(
             decision_style=TraitScore(**result["traits"]["decision_style"]),
@@ -57,5 +64,5 @@ Biography:
             role=leader.role,
             traits=traits,
             summary=result["summary"],
-            bio_summary=result.get("bio_summary", result["summary"]),
+            bio_summary=bio_summary,
         )

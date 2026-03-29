@@ -172,6 +172,25 @@ def list_scenarios():
     ]
 
 
+class NewScenarioRequest(BaseModel):
+    name: str
+    description: str
+
+
+@app.post("/scenarios", tags=["Scenarios"], status_code=201)
+def create_scenario(request: NewScenarioRequest):
+    """Register a new scenario using LLM to generate trait weights."""
+    scenario_input = ScenarioInput(custom_description=request.description)
+    custom_scenario = context_calibrator.run(scenario_input)
+    
+    new_id = f"scenario-{uuid.uuid4().hex[:8]}"
+    custom_scenario.id = new_id
+    custom_scenario.name = request.name
+    
+    context_calibrator.save_scenario(custom_scenario)
+    return {"id": custom_scenario.id, "name": custom_scenario.name, "description": custom_scenario.description}
+
+
 # ──────────────────────────────────────────────
 # Full pipeline endpoints
 # ──────────────────────────────────────────────
